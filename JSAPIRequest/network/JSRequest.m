@@ -20,6 +20,11 @@
     return self;
 }
 @end
+@implementation JSUploadFileRequest
+@end
+
+@implementation JSUploadFileUtil
+@end
 
 @implementation UserInfoRequest
 - (instancetype)init

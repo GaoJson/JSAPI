@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8FB6CA151D992222008E34CD /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FB6CA141D992222008E34CD /* demo.png */; };
 		8FFAEA261D90FE5200EF2DC3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFAEA251D90FE5200EF2DC3 /* main.m */; };
 		8FFAEA291D90FE5200EF2DC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFAEA281D90FE5200EF2DC3 /* AppDelegate.m */; };
 		8FFAEA2C1D90FE5200EF2DC3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFAEA2B1D90FE5200EF2DC3 /* ViewController.m */; };
@@ -47,6 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8FB6CA141D992222008E34CD /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
 		8FFAEA211D90FE5200EF2DC3 /* JSAPIRequest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSAPIRequest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FFAEA251D90FE5200EF2DC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8FFAEA271D90FE5200EF2DC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				8FFAEA281D90FE5200EF2DC3 /* AppDelegate.m */,
 				8FFAEA2A1D90FE5200EF2DC3 /* ViewController.h */,
 				8FFAEA2B1D90FE5200EF2DC3 /* ViewController.m */,
+				8FB6CA141D992222008E34CD /* demo.png */,
 				8FFAEA2D1D90FE5200EF2DC3 /* Main.storyboard */,
 				8FFAEA301D90FE5200EF2DC3 /* Assets.xcassets */,
 				8FFAEA321D90FE5200EF2DC3 /* LaunchScreen.storyboard */,
@@ -341,6 +344,7 @@
 			files = (
 				8FFAEA341D90FE5200EF2DC3 /* LaunchScreen.storyboard in Resources */,
 				8FFAEA311D90FE5200EF2DC3 /* Assets.xcassets in Resources */,
+				8FB6CA151D992222008E34CD /* demo.png in Resources */,
 				8FFAEA711D90FF2C00EF2DC3 /* LICENSE in Resources */,
 				8FFAEA2F1D90FE5200EF2DC3 /* Main.storyboard in Resources */,
 				8FFAEA951D91029B00EF2DC3 /* LICENSE in Resources */,
@@ -534,6 +538,7 @@
 				8FFAEA3A1D90FE5200EF2DC3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

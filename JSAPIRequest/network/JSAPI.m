@@ -50,7 +50,9 @@
     }];
 }
 
-+ (void)GET_Request:(JSRequest *)request success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
++ (void)GET_Request:(JSRequest *)request
+            success:(void (^)(id response))success
+            failure:(void (^)(NSError *error))failue {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
@@ -75,6 +77,40 @@
          failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull   error) {
              failue(error);
          }];
+}
+
++ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
+    NSString *requestUrl = request.requestUrl;
+    request.requestUrl = nil;
+    request.httpMethod = nil;
+    request.timeoutInterval = nil;
+    request.httpMethod = nil;
+    request.params = request.mj_keyValues;
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
+    security.allowInvalidCertificates = YES;
+    security.validatesDomainName = NO;
+    manager.securityPolicy = security;
+    [manager POST:requestUrl parameters:request.params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
+        if (fileArray.count) {
+            for (JSUploadFileUtil *model in fileArray) {
+                [formData appendPartWithFileData:model.files
+                                            name:model.formName
+                                        fileName:model.fileName
+                                        mimeType:model.fileType];
+            }
+        }
+    } progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        id data = [NSJSONSerialization JSONObjectWithData:responseObject
+                                                  options:NSJSONReadingMutableContainers
+                                                    error:nil];
+        success(data);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        failue(error);
+    }];
 }
 
 @end

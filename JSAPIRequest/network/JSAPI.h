@@ -15,8 +15,18 @@
 
 
 @interface JSAPI : NSObject
-
+/**
+ * GET POST 请求端口
+ */
 + (void)request:(JSRequest *)request success:(void (^)(id response))success failure:(void (^)(NSError *error))failue;
+
+
+/**
+ * 上传图片  
+ * fileArray 图片的数组  承载模型 JSUploadFileUtil 
+ *
+ */
++ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray success:(void (^)(id response))success failure:(void (^)(NSError *error))failue;
 
 
 @end
