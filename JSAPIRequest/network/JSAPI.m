@@ -79,7 +79,7 @@
          }];
 }
 
-+ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
++ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray progress:(void (^)(NSProgress *progress))progress success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
     NSString *requestUrl = request.requestUrl;
     request.requestUrl = nil;
     request.httpMethod = nil;
@@ -103,7 +103,7 @@
                                         mimeType:model.fileType];
             }
         }
-    } progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+    } progress:progress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         id data = [NSJSONSerialization JSONObjectWithData:responseObject
                                                   options:NSJSONReadingMutableContainers
                                                     error:nil];
@@ -112,5 +112,29 @@
         failue(error);
     }];
 }
+
++(void)downLoadFileRequest:(JSRequest *)request downloadFilePath:(NSString *)fileName progress:(void (^)(NSProgress *downloadProgress))downloadProgressBlock success:(void (^)(id response))success failure:(void (^)(NSError *error))failue{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
+    security.allowInvalidCertificates = YES;
+    security.validatesDomainName = NO;
+    manager.securityPolicy = security;
+    NSURLRequest *requests = [NSURLRequest requestWithURL:[NSURL URLWithString:request.requestUrl]];
+    NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:requests progress:downloadProgressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+      
+        return [NSURL fileURLWithPath:fileName];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        if (error) {
+            failue(error);
+        }else{
+            success(response);
+        }
+    }];
+    [task resume];
+}
+
 
 @end

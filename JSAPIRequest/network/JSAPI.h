@@ -26,7 +26,7 @@
  * fileArray 图片的数组  承载模型 JSUploadFileUtil 
  *
  */
-+ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray success:(void (^)(id response))success failure:(void (^)(NSError *error))failue;
++ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray progress:(void (^)(NSProgress *))progress success:(void (^)(id response))success failure:(void (^)(NSError *error))failue;
 
-
++(void)downLoadFileRequest:(JSRequest *)request downloadFilePath:(NSString *)fileName progress:(void (^)(NSProgress *downloadProgress))downloadProgressBlock success:(void (^)(id response))success failure:(void (^)(NSError *error))failue;
 @end
