@@ -18,7 +18,9 @@
     request.httpMethod = nil;
     request.timeoutInterval = nil;
     request.httpMethod = nil;
-    param.params = request.mj_keyValues;
+    if (!request.params) {
+       param.params = request.mj_keyValues;
+    }
     if ( [param.httpMethod isEqualToString:@"GET"] ) {
         [JSAPI GET_Request:param success:success failure:failue];
     }else if ( [param.httpMethod isEqualToString:@"POST"] ) {
@@ -85,7 +87,9 @@
     request.httpMethod = nil;
     request.timeoutInterval = nil;
     request.httpMethod = nil;
-    request.params = request.mj_keyValues;
+    if (!request.params) {
+        request.params = request.mj_keyValues;
+    }
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];

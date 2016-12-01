@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		8FB6CA151D992222008E34CD /* demo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8FB6CA141D992222008E34CD /* demo.png */; };
-		8FB6CAC91D9E0493008E34CD /* 750X1200Q1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8FB6CAC81D9E0493008E34CD /* 750X1200Q1.jpg */; };
 		8FFAEA261D90FE5200EF2DC3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFAEA251D90FE5200EF2DC3 /* main.m */; };
 		8FFAEA291D90FE5200EF2DC3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFAEA281D90FE5200EF2DC3 /* AppDelegate.m */; };
 		8FFAEA2C1D90FE5200EF2DC3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFAEA2B1D90FE5200EF2DC3 /* ViewController.m */; };
@@ -46,7 +45,6 @@
 
 /* Begin PBXFileReference section */
 		8FB6CA141D992222008E34CD /* demo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = demo.png; sourceTree = "<group>"; };
-		8FB6CAC81D9E0493008E34CD /* 750X1200Q1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 750X1200Q1.jpg; sourceTree = "<group>"; };
 		8FFAEA211D90FE5200EF2DC3 /* JSAPIRequest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JSAPIRequest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FFAEA251D90FE5200EF2DC3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8FFAEA271D90FE5200EF2DC3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -151,7 +149,6 @@
 				8FFAEA451D90FF2C00EF2DC3 /* AFNetworking */,
 				8FFAEA3E1D90FED900EF2DC3 /* network */,
 				8FFAEA271D90FE5200EF2DC3 /* AppDelegate.h */,
-				8FB6CAC81D9E0493008E34CD /* 750X1200Q1.jpg */,
 				8FFAEA281D90FE5200EF2DC3 /* AppDelegate.m */,
 				8FFAEA2A1D90FE5200EF2DC3 /* ViewController.h */,
 				8FFAEA2B1D90FE5200EF2DC3 /* ViewController.m */,
@@ -337,7 +334,6 @@
 				8FFAEA311D90FE5200EF2DC3 /* Assets.xcassets in Resources */,
 				8FB6CA151D992222008E34CD /* demo.png in Resources */,
 				8FFAEA2F1D90FE5200EF2DC3 /* Main.storyboard in Resources */,
-				8FB6CAC91D9E0493008E34CD /* 750X1200Q1.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
