@@ -27,13 +27,12 @@
 
 - (IBAction)request:(id)sender {
     UserInfoRequest *request = [[UserInfoRequest alloc] init];
-    request.httpMethod = @"GET";
+    request.httpMethod = APIHttpMethodPOST;
     request.requestUrl = @"http://www.weather.com.cn/data/sk/101010100.html";
     
     /**  1 **/
     request.userId = 21;
     /**  2  **/
-    request.params = @{@"userId":@12};
     
     [JSAPI request:request success:^(id response) {
         NSLog(@"%@",response);

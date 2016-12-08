@@ -8,10 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+
+typedef enum {
+    APIHttpMethodGET,
+    APIHttpMethodPOST
+}APIHttpMethod;
+
 @interface JSRequest : NSObject
-@property (nonatomic, strong) NSString *httpMethod;
+@property (nonatomic, assign) APIHttpMethod httpMethod;
 @property (nonatomic, strong) NSString *requestUrl;
-@property (nonatomic, assign) NSString *timeoutInterval;
+@property (nonatomic, assign) NSInteger timeoutInterval;
 @property (nonatomic, strong) id params;
 @end
 

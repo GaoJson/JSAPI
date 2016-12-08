@@ -15,15 +15,16 @@
     param.httpMethod = request.httpMethod;
     param.requestUrl = request.requestUrl;
     param.timeoutInterval = request.timeoutInterval;
-    request.httpMethod = nil;
-    request.timeoutInterval = nil;
-    request.httpMethod = nil;
+    request.requestUrl = nil;
     if (!request.params) {
-       param.params = request.mj_keyValues;
+     NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
+        [temp removeObjectForKey:@"httpMethod"];
+        [temp removeObjectForKey:@"timeoutInterval"];
+        param.params = temp;
     }
-    if ( [param.httpMethod isEqualToString:@"GET"] ) {
+    if ( param.httpMethod == APIHttpMethodGET ) {
         [JSAPI GET_Request:param success:success failure:failue];
-    }else if ( [param.httpMethod isEqualToString:@"POST"] ) {
+    }else if ( param.httpMethod == APIHttpMethodPOST ) {
         [JSAPI POST_Request:param success:success failure:failue];
     }
 }
@@ -32,7 +33,7 @@
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    manager.requestSerializer.timeoutInterval = [request.timeoutInterval integerValue]?:60;
+    manager.requestSerializer.timeoutInterval = request.timeoutInterval;
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
     security.allowInvalidCertificates = YES;
@@ -44,6 +45,7 @@
     }else{
         requestUrl = [URL_Release stringByAppendingString:request.requestUrl];
     }
+    NSLog(@"\nurl=%@  \n params=%@",request.requestUrl,request.params);
     [manager POST:requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
         success(data);
@@ -58,7 +60,7 @@
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    manager.requestSerializer.timeoutInterval = [request.timeoutInterval integerValue]?:60;
+    manager.requestSerializer.timeoutInterval = request.timeoutInterval;
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
     security.allowInvalidCertificates = YES;
@@ -71,6 +73,7 @@
     }else{
        requestUrl = [URL_Release stringByAppendingString:request.requestUrl];
     }
+    NSLog(@"\nurl=%@  \n params=%@",request.requestUrl,request.params);
     [manager GET:requestUrl parameters:nil progress:nil
          success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
              id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
@@ -84,11 +87,11 @@
 + (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray progress:(void (^)(NSProgress *progress))progress success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
     NSString *requestUrl = request.requestUrl;
     request.requestUrl = nil;
-    request.httpMethod = nil;
-    request.timeoutInterval = nil;
-    request.httpMethod = nil;
     if (!request.params) {
-        request.params = request.mj_keyValues;
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
+        [temp removeObjectForKey:@"httpMethod"];
+        [temp removeObjectForKey:@"timeoutInterval"];
+        request.params = temp;
     }
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
