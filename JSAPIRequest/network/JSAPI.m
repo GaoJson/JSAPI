@@ -84,6 +84,74 @@
          }];
 }
 
++ (void)requesSync:(JSRequest *)request
+           success:(void (^)(id response))success
+           failure:(void (^)(NSError *error))failue {
+    JSRequest *param = [[JSRequest alloc] init];
+    param.httpMethod = request.httpMethod;
+    param.requestUrl = request.requestUrl;
+    param.timeoutInterval = request.timeoutInterval;
+    request.requestUrl = nil;
+    if (!request.params) {
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
+        [temp removeObjectForKey:@"httpMethod"];
+        [temp removeObjectForKey:@"timeoutInterval"];
+        param.params = temp;
+    }
+    NSString *URLString = @"";
+    if ([request.requestUrl rangeOfString:@"http://"].length) {
+        URLString = request.requestUrl;
+    }else{
+        URLString = [URL_Release stringByAppendingString:request.requestUrl];
+    }
+    
+    NSInteger method;
+    NSString *httpMethod;
+    if (param.httpMethod == APIHttpMethodPOST) {
+        method = 0;
+        httpMethod = @"POST";
+    }else{
+        method = 1;
+        httpMethod = @"GET";
+    }
+    
+    NSURL *requestUrl = [NSURL URLWithString:URLString];
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:requestUrl];
+    [urlRequest setTimeoutInterval:param.timeoutInterval];
+    [urlRequest setHTTPMethod:httpMethod];
+    
+    //1>拼接请求参数:username=wxhl&password=123456&key=value&....
+    NSMutableString *paramsString = [NSMutableString string];
+    NSDictionary *params = param.params;
+    NSArray *allKeys = params.allKeys;
+    for (int i=0; i<params.count; i++) {
+        NSString *key = allKeys[i];
+        NSString *value = params[key];
+        [paramsString appendFormat:@"%@=%@",key,value];
+        if (i < params.count-1) {
+            [paramsString appendString:@"&"];
+        }
+    }
+    
+    if (method == 1) {
+        NSString *separe = requestUrl.query?@"&":@"?";
+        NSString *paramsURL = [NSString stringWithFormat:@"%@%@%@",URLString,separe,paramsString];
+        urlRequest.URL = [NSURL URLWithString:paramsURL];
+    }else{
+        NSData *bodyData = [paramsString dataUsingEncoding:NSUTF8StringEncoding];
+        [urlRequest setHTTPBody:bodyData];
+    }
+    NSLog(@"%@  \n %@",URLString,params);
+    NSError *error = nil;
+    NSData *data = [NSURLConnection sendSynchronousRequest:urlRequest returningResponse:nil error:&error];
+    if (error) {
+        failue(error);
+    }else{
+        id result = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        success(result);
+    }
+}
+
 + (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray progress:(void (^)(NSProgress *progress))progress success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
     NSString *requestUrl = request.requestUrl;
     request.requestUrl = nil;
