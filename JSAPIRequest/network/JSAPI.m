@@ -11,77 +11,52 @@
 @implementation JSAPI
 
 + (void)request:(JSRequest *)request success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
-    JSRequest *param = [[JSRequest alloc] init];
-    param.httpMethod = request.httpMethod;
-    param.requestUrl = request.requestUrl;
-    param.timeoutInterval = request.timeoutInterval;
+    APIHttpMethod method = request.httpMethod;
+    NSString *requestUrl = request.requestUrl?:@"";
+    NSInteger timeoutInterval = request.timeoutInterval;
+    NSDictionary *params = request.params;
     request.requestUrl = nil;
     if (!request.params) {
-     NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
         [temp removeObjectForKey:@"httpMethod"];
         [temp removeObjectForKey:@"timeoutInterval"];
-        param.params = temp;
+        params = temp;
     }
-    if ( param.httpMethod == APIHttpMethodGET ) {
-        [JSAPI GET_Request:param success:success failure:failue];
-    }else if ( param.httpMethod == APIHttpMethodPOST ) {
-        [JSAPI POST_Request:param success:success failure:failue];
-    }
-}
-
-+ (void)POST_Request:(JSRequest *)request success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html",@"text/plain", nil];
     manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    manager.requestSerializer.timeoutInterval = request.timeoutInterval;
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
-    security.allowInvalidCertificates = YES;
-    security.validatesDomainName = NO;
-    manager.securityPolicy = security;
-    NSString *requestUrl = @"";
-    if ([request.requestUrl rangeOfString:@"http://"].length) {
-        requestUrl = request.requestUrl;
-    }else{
-        requestUrl = [URL_Release stringByAppendingString:request.requestUrl];
-    }
-    NSLog(@"\nurl=%@  \n params=%@",request.requestUrl,request.params);
-    [manager POST:requestUrl parameters:request.params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-        success(data);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        failue(error);
-    }];
-}
-
-+ (void)GET_Request:(JSRequest *)request
-            success:(void (^)(id response))success
-            failure:(void (^)(NSError *error))failue {
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    manager.requestSerializer.timeoutInterval = request.timeoutInterval;
     manager.responseSerializer = [AFHTTPResponseSerializer serializer];
     AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
     security.allowInvalidCertificates = YES;
     security.validatesDomainName = NO;
     manager.securityPolicy = security;
     
-    NSString *requestUrl = @"";
-    if ([request.requestUrl rangeOfString:@"http://"].length) {
-       requestUrl = request.requestUrl;
+    /***超时时间****/
+    manager.requestSerializer.timeoutInterval = timeoutInterval;
+    
+    if ([requestUrl rangeOfString:@"http://"].length) {
+        requestUrl = requestUrl;
     }else{
-       requestUrl = [URL_Release stringByAppendingString:request.requestUrl];
+        requestUrl = [URL_Release stringByAppendingString:requestUrl];
     }
-    NSLog(@"\nurl=%@  \n params=%@",request.requestUrl,request.params);
-    [manager GET:requestUrl parameters:nil progress:nil
-         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-             id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
-             success(data);
-         }
-         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull   error) {
-             failue(error);
-         }];
+    NSLog(@"%@ \n %@",requestUrl,params);
+    if (method == APIHttpMethodPOST) {
+        [manager POST:requestUrl parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+            id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+            success(data);
+        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+            failue(error);
+        }];
+    }else if (method == APIHttpMethodGET) {
+        [manager GET:requestUrl parameters:nil progress:nil
+             success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+                 id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+                 success(data);
+             }
+             failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull   error) {
+                 failue(error);
+             }];
+    }
 }
 
 + (void)requesSync:(JSRequest *)request
@@ -199,7 +174,7 @@
     manager.securityPolicy = security;
     NSURLRequest *requests = [NSURLRequest requestWithURL:[NSURL URLWithString:request.requestUrl]];
     NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:requests progress:downloadProgressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-      
+        
         return [NSURL fileURLWithPath:fileName];
     } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
         if (error) {
