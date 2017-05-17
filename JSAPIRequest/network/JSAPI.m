@@ -59,6 +59,65 @@
     }
 }
 
++ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray progress:(void (^)(NSProgress *progress))progress success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
+    NSString *requestUrl = request.requestUrl;
+    request.requestUrl = nil;
+    if (!request.params) {
+        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
+        [temp removeObjectForKey:@"httpMethod"];
+        [temp removeObjectForKey:@"timeoutInterval"];
+        request.params = temp;
+    }
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer.acceptableContentTypes = [NSSet setWithObjects:@"application/json", @"text/json", @"text/javascript",@"text/html",@"text/plain", nil];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
+    security.allowInvalidCertificates = YES;
+    security.validatesDomainName = NO;
+    manager.securityPolicy = security;
+    
+    [manager POST:requestUrl parameters:request.params constructingBodyWithBlock:^(id<AFMultipartFormData> formData) {
+        // 上传文件
+        for (JSUploadFileUtil *model in fileArray) {
+              [formData appendPartWithFileData:model.files
+                                          name:model.formName
+                                      fileName:model.fileName
+                                      mimeType:model.fileType];
+        }
+    } progress:progress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+        id data = [NSJSONSerialization JSONObjectWithData:responseObject options:NSJSONReadingMutableContainers error:nil];
+        success(data);
+    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+        failue(error);
+    }];
+    
+}
+
++(void)downLoadFileRequest:(JSRequest *)request downloadFilePath:(NSString *)fileName progress:(void (^)(NSProgress *downloadProgress))downloadProgressBlock success:(void (^)(id response))success failure:(void (^)(NSError *error))failue{
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
+    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
+    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
+    security.allowInvalidCertificates = YES;
+    security.validatesDomainName = NO;
+    manager.securityPolicy = security;
+    NSURLRequest *requests = [NSURLRequest requestWithURL:[NSURL URLWithString:request.requestUrl]];
+    NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:requests progress:downloadProgressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
+        
+        return [NSURL fileURLWithPath:fileName];
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
+        if (error) {
+            failue(error);
+        }else{
+            success(response);
+        }
+    }];
+    [task resume];
+}
+
 + (void)requesSync:(JSRequest *)request
            success:(void (^)(id response))success
            failure:(void (^)(NSError *error))failue {
@@ -126,65 +185,5 @@
         success(result);
     }
 }
-
-+ (void)uploadFileRequest:(JSRequest *)request fileArray:(NSArray *)fileArray progress:(void (^)(NSProgress *progress))progress success:(void (^)(id response))success failure:(void (^)(NSError *error))failue {
-    NSString *requestUrl = request.requestUrl;
-    request.requestUrl = nil;
-    if (!request.params) {
-        NSMutableDictionary *temp = [NSMutableDictionary dictionaryWithDictionary:request.mj_keyValues];
-        [temp removeObjectForKey:@"httpMethod"];
-        [temp removeObjectForKey:@"timeoutInterval"];
-        request.params = temp;
-    }
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
-    security.allowInvalidCertificates = YES;
-    security.validatesDomainName = NO;
-    manager.securityPolicy = security;
-    [manager POST:requestUrl parameters:request.params constructingBodyWithBlock:^(id<AFMultipartFormData>  _Nonnull formData) {
-        if (fileArray.count) {
-            for (JSUploadFileUtil *model in fileArray) {
-                [formData appendPartWithFileData:model.files
-                                            name:model.formName
-                                        fileName:model.fileName
-                                        mimeType:model.fileType];
-            }
-        }
-    } progress:progress success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        id data = [NSJSONSerialization JSONObjectWithData:responseObject
-                                                  options:NSJSONReadingMutableContainers
-                                                    error:nil];
-        success(data);
-    } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        failue(error);
-    }];
-}
-
-+(void)downLoadFileRequest:(JSRequest *)request downloadFilePath:(NSString *)fileName progress:(void (^)(NSProgress *downloadProgress))downloadProgressBlock success:(void (^)(id response))success failure:(void (^)(NSError *error))failue{
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-    manager.responseSerializer.acceptableContentTypes = [manager.responseSerializer.acceptableContentTypes setByAddingObject:@"text/html"];
-    manager.requestSerializer = [AFHTTPRequestSerializer serializer];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    AFSecurityPolicy *security = [AFSecurityPolicy defaultPolicy];
-    security.allowInvalidCertificates = YES;
-    security.validatesDomainName = NO;
-    manager.securityPolicy = security;
-    NSURLRequest *requests = [NSURLRequest requestWithURL:[NSURL URLWithString:request.requestUrl]];
-    NSURLSessionDownloadTask *task = [manager downloadTaskWithRequest:requests progress:downloadProgressBlock destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
-        
-        return [NSURL fileURLWithPath:fileName];
-    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
-        if (error) {
-            failue(error);
-        }else{
-            success(response);
-        }
-    }];
-    [task resume];
-}
-
 
 @end

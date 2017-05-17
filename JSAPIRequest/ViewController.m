@@ -22,10 +22,11 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     NSString *paths = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSLog(@"%@  %@",paths,NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) );
+    //NSLog(@"%@  %@",paths,NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) );
 }
 
 - (IBAction)request:(id)sender {
+     /**  GET请求   */
     JSRequest *request = [[JSRequest alloc] init];
     request.httpMethod = APIHttpMethodGET;
     request.requestUrl = @"http://wthrcdn.etouch.cn/weather_mini?citykey=101010100";
@@ -35,6 +36,20 @@
     } failure:^(NSError *error) {
         NSLog(@"%@",error);
     }];
+
+#if 0
+    /**  POST请求   */
+    JSRequest *request = [[JSRequest alloc] init];
+    request.httpMethod = APIHttpMethodPOST;
+    request.requestUrl = @"http://wthrcdn.etouch.cn";
+    request.params = @{@"city":@"100001",
+                       @"time":@"1011"};
+    [JSAPI request:request success:^(id response) {
+        NSLog(@"%@",response);
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
+#endif
 }
 
 - (IBAction)uploadFile:(id)sender {
@@ -46,11 +61,11 @@
         JSUploadFileUtil *model = [[JSUploadFileUtil alloc] init];
         model.imageWidth = image.size.width;
         model.imageHeight = image.size.height;
-        model.formName = [NSString stringWithFormat:@"file__%ld",i];
+        model.formName = [NSString stringWithFormat:@"myfile__%ld",i];
         model.fileName = [NSString stringWithFormat:@"fileName__%ld",i];
         model.fileType = @"image/jepg";
-        [postArray addObject:model.mj_keyValues];
         model.files = imageData;
+        [postArray addObject:model.mj_keyValues];
         [fileArray addObject:model];
     }
     // fileArray  文件上传的信息
@@ -58,10 +73,8 @@
     // requestUrl 本地服务器地址  php 进行环境测试
     
     JSUploadFileRequest *request = [[JSUploadFileRequest alloc] init];
-    request.userId = @"100";
-    request.requestUrl = @"http://127.0.0.1/myfirstphp/index.php";
-    request.params = [postArray mj_JSONString];
-    
+    request.requestUrl = @"http://127.0.0.1/upload.php";
+    request.params = @{@"image":postArray};
     [JSAPI uploadFileRequest:request fileArray:fileArray progress:^(NSProgress *progress) {
         NSLog(@"progress=%f",progress.fractionCompleted);
     } success:^(id response) {
