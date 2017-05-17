@@ -1,6 +1,7 @@
 # JSAPI
 use AFNetworking and MJExsion to package the URL, so that we can more easily to complete net request  
 <pre>
+<<<<<<< HEAD
 JSRequest *request = [[JSRequest alloc] init];
 request.httpMethod = APIHttpMethodGET;
 request.requestUrl = @"http://wthrcdn.etouch.cn/weather_mini?citykey=101010100";
@@ -10,6 +11,17 @@ NSLog(@"%@",response);
 } failure:^(NSError *error) {
 NSLog(@"%@",error);
 }];
+=======
+    JSRequest *request = [[JSRequest alloc] init];
+    request.httpMethod = APIHttpMethodGET;
+    request.requestUrl = @"http://wthrcdn.etouch.cn/weather_mini?citykey=101010100";
+    
+    [JSAPI request:request success:^(id response) {
+        NSLog(@"%@",response);
+    } failure:^(NSError *error) {
+        NSLog(@"%@",error);
+    }];
+>>>>>>> 33cfbd43d89cb9bf61fc219d9df8861622cd39f2
 </pre>
 
 when you want to upload file,you can use object to upload file 
